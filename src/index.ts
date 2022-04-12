@@ -23,6 +23,7 @@ function ping(...args: PingArgs): Promise<PingResult> {
 
     client.on('message', (msg) => {
       const latency = +new Date() - start;
+      client.close();
 
       resolve({
         version: msg.slice(1, 4).join('.'),
@@ -31,11 +32,12 @@ function ping(...args: PingArgs): Promise<PingResult> {
         bandwidth: msg.readUInt32BE(20),
         latency,
       });
-
-      client.close();
     });
 
-    setTimeout(() => reject('timeout'), timeout);
+    setTimeout(() => {
+      client.close();
+      reject('timeout');
+    }, timeout);
   });
 }
 
