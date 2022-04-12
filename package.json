@@ -1,6 +1,6 @@
 {
   "name": "murmur-ping",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "Retrieve server information from a Murmur (mumble) server",
   "license": "ISC",
   "repository": {
