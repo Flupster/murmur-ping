@@ -21,8 +21,16 @@ function ping(...args: PingArgs): Promise<PingResult> {
       if (e) reject(e);
     });
 
+    const timeoutId = setTimeout(() => {
+      client.close();
+      reject('timeout');
+    }, timeout);
+
     client.once('message', (msg) => {
+      clearTimeout(timeoutId);
+
       const latency = +new Date() - start;
+      client.close();
 
       resolve({
         version: msg.slice(1, 4).join('.'),
@@ -31,14 +39,7 @@ function ping(...args: PingArgs): Promise<PingResult> {
         bandwidth: msg.readUInt32BE(20),
         latency,
       });
-
-      client.close();
     });
-
-    setTimeout(() => {
-      client.close();
-      reject('timeout');
-    }, timeout);
   });
 }
 
